@@ -129,7 +129,7 @@ class Student():
           You are also given the current counsellor utterance and the previous dialogue history between the counsellor and you.
           The counsellor has suggested you a career choice. You need to reject this suggestion as it too early in the dialogue.
           You will be given Field following the suggestions which is currently empty in the JSON schema. You need to generate values and a story for that field which will also help you to explain why you are rejecting the counsellor's suggestion.
-          You are given two examples. Answer as if you were the person given in the schema.
+          You are given two examples. Answer as if you were the person given in the schema. Just output your answer and nothing else.
           ## Example 1. <Counsellor Suggestion>: I think you should become a Doctor. <Field>: Relationships.Mother <Answer>: My mother is actually a Surgeon. She works at Apollo Hospital in Luton Town. But since my childhood, she has always been busy. She never has time for her family and I have very few memories of her. I feel like I want a career where I can have a proper work-life balance. So, I don't think being a Doctor is for me.
           ## Example 2. <Counsellor Suggestion>: Have you considered Engineering as your career? <Field>: Education.High-School <Answer>: In the third year of my high school, I took a lot of Math courses. I quickly realized performing huge number of calculations is not for me. I don't think Engineering would be a good idea.
           """
