@@ -17,10 +17,10 @@ class Student():
     self.last_detected_fields = []
     self.threshold = 0.6
 
-  def llm_request(self, prompt, mode='text'):
+  def llm_request(self, prompt, mode='text', temperature=1):
     if self.llm == 'gpt':
       if mode == 'json':
-        r = self.gpt4_request(prompt, 'json_object')
+        r = self.gpt4_request(prompt, 'json_object', temperature=temperature)
         # print(r)
         response = json.loads(r.content)
       else:
@@ -55,7 +55,7 @@ class Student():
     nl = "\n"
     final_prompt = f'{sys_prompt}{nl}{str(self.schema.get_schema())}{nl}{description}{nl}'
     # print(final_prompt)
-    response = self.llm_request(final_prompt, 'json')
+    response = self.llm_request(final_prompt, 'json', temperature=0)
     # print(response)
 
     ##TODO Check if returned schema has the same keys as the original schema
@@ -85,7 +85,7 @@ class Student():
     nl = "\n"
     final_prompt = f'{sys_prompt}{nl}{str(self.schema.get_schema())}{nl}{user_dialogue}{nl}{sys_response}{nl}'
     # print(final_prompt)
-    response = self.llm_request(final_prompt, 'json')
+    response = self.llm_request(final_prompt, 'json', temperature=0)
     # print(response)
 
     ##TODO Check if returned schema has the same keys as the original schema
@@ -109,7 +109,7 @@ class Student():
       nl = "\n"
       final_prompt = f'{str(self.schema.get_schema())}{nl}<Dialogue History>: {self.history}{nl}{sys_prompt}{nl}<Counsellor Utterance>: {q}{nl}'
       print(final_prompt)
-      r = self.llm_request(final_prompt)
+      r = self.llm_request(final_prompt, temperature=1)
       print(r)
 
       self.update_schema(user_dialogue, None, r, relevant_fields)
@@ -137,8 +137,9 @@ class Student():
         nl = "\n"
         final_prompt = f'{str(self.schema.get_schema())}{nl}<Dialogue History>: {self.history}{nl}{sys_prompt}{nl}{q}{nl}'
         print(final_prompt)
-        r = self.llm_request(final_prompt)
+        r = self.llm_request(final_prompt, temperature=1)
         print(r)
+        r = r.replace('</Answer>', '')
 
         self.update_schema(user_dialogue, None, r, empty_field)
         
@@ -159,7 +160,7 @@ class Student():
         nl = "\n"
         final_prompt = f'{str(self.schema.get_schema())}{nl}<Dialogue History>: {self.history}{nl}{sys_prompt}{nl}<Counsellor Suggestion>: {q}{nl}'
         print(final_prompt)
-        r = self.llm_request(final_prompt)
+        r = self.llm_request(final_prompt, temperature=1)
         print(r)
 
         self.history.append(f'Counsellor: {user_dialogue}{nl}')
@@ -187,10 +188,11 @@ class Student():
       nl = "\n"
       final_prompt = f'{str(self.schema.get_schema())}{nl}<Dialogue History>: {self.history}{nl}{sys_prompt}{nl}{q}{nl}'
       print(final_prompt)
-      r = self.llm_request(final_prompt)
+      r = self.llm_request(final_prompt, temperature=1)
       print(r)
       _, _, response = r.partition('<Value>')
       sys_values, _, sys_response = response.partition('<Answer>')
+      sys_response = sys_response.replace('</Answer>', '')
       print('Sys_value: ', sys_values, 'sys_answer: ', sys_response)
 
       self.update_schema(user_dialogue, sys_values, sys_response, relevant_fields)
@@ -222,7 +224,7 @@ class Student():
     nl = "\n"
     final_prompt = f'{str(self.schema.get_schema())}{nl}<Dialogue History>: {self.history}{nl}{sys_prompt}{nl}<Question>: {dialogue}{nl}'
     # print(final_prompt)
-    r = self.llm_request(final_prompt)
+    r = self.llm_request(final_prompt, temperature=0)
     filtered_fields = []
     r = r.replace(' ', '').split(',')
     print('Schema Fields detected:', r)
